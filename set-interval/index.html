@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset='utf-8'>
+    <title>Framerate</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <style>body { background: #111; color: #eee }</style>    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%F0%9F%96%A5</text></svg>">
+</head>
+<body>
+    Test Browser Framerate Refresh (SetInterval 4ms)
+
+    <pre id="data"></pre>
+
+<script>
+
+let frameMillis = []
+let frameN = 0
+let lastFrameMS
+let currFrameMS
+let loop
+
+function checkFrame () {
+    lastFrameMS = frames[frameN++] = currFrameMS
+    currFrameMS = performance.now()
+    const millis = Math.trunc((currFrameMS - lastFrameMS) * 3)
+    frameMillis[millis] = (frameMillis[millis] || 0) + 1
+}
+
+function printFrameData () {
+    data.innerHTML = frameMillis.map((f, i) => `${(i / 3).toFixed(2)}. ${f}`).join('\n')
+    requestAnimationFrame(printFrameData)
+}
+
+setTimeout(() => {
+    loop = setInterval(checkFrame, 4)
+    printFrameData()
+}, 100 - performance.now())
+
+</script>
+</body>
+</html>

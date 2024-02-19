@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset='utf-8'>
+    <title>Framerate</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <style>body { background: #111; color: #eee }</style>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%F0%9F%96%A5</text></svg>">
+</head>
+<body>
+    Test Input Precision (SetInterval 4ms)
+
+    <pre id="data"></pre>
+
+<script>
+
+const now = performance.now.bind(performance)
+let frameABC = []
+let previousFrames = []
+let frameN = 0
+let touchMs = 0
+let lastRenderMs = 0
+let loop
+let dataString = ''
+
+function checkFrame () {
+    frameN = (frameN + 1) % 5
+    frameABC[frameN] = now()
+}
+
+function render () {
+    const renderMs = now()
+    if (touchMs) {
+        dataString = frameABC.map((_, i, x) => x[(frameN + 1 + i) % 5]).map(f => (f - touchMs).toFixed(3)).join(' ') + '\n' +
+            (lastRenderMs - touchMs).toFixed(3) + ` ~ [${touchMs.toFixed(3)}] ~ ` + (renderMs - touchMs).toFixed(3)
+        touchMs = 0
+    }
+    data.innerHTML = dataString + `\n\n[${renderMs.toFixed(3)}] (` + Math.round(250 / (renderMs - lastRenderMs)) * 4 + 'hz)'
+    lastRenderMs = renderMs
+    requestAnimationFrame(render)
+}
+
+setTimeout(() => {
+    loop = setInterval(checkFrame, 4)
+    requestAnimationFrame(render)
+}, 100 - now())
+
+const onAct = () => {
+    touchMs = now()
+}
+
+document.addEventListener('keydown', onAct)
+document.addEventListener('touchstart', onAct)
+
+</script>
+</body>
+</html>
